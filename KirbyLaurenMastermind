@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <strings.h>
+#include <stdlib.h>
+#include <time.h>
+
+void manual(void);
+
+int main(void)
+{
+    const char *set="123456";
+    char secret[6];
+    char guess[6];
+    char again;
+    int guess_check[5];
+    int secret_check[5];
+    char play='0';
+    int run;
+    int i,j;
+    
+    printf("Welcome to mastermind!\n");
+    printf("Press 1 to play, press 2 for help: ");
+    play=getch();
+    putchar(play);
+    
+    if (play=='2')
+    {
+        manual();
+    }
+    if((play!='1')&&(play!='2'))
+    {
+        printf("\nInvalid action!\n");
+        return EXIT_FAILURE;
+    }    
+    again='y';
+    while((again=='y')||(again=='Y'))
+    {    
+        int get_random;
+        srand((unsigned)time(NULL));
+        for(get_random=0;get_random<5;get_random++)
+        {
+                secret[get_random]=set[rand()%6];
+        }
+        secret[5]='\0';
+        for(run=1;run<9;run++)
+        {       
+                printf("\nEnter guess %d: ",run);
+                for(i=0;i<5;i++)//get input
+                {
+                       guess[i]=getch();
+                       putchar(guess[i]);
+                      
+                }
+                guess[5]='\0';
+        
+                printf("\n%s\t",guess);
+                int test=strcmp(guess,secret);
+                if(test==0)
+                {
+                       printf("*****");
+                       printf("\nCongratulations!!"); 
+                       printf("\nYou needed %d guesses to win, the secret code was: %s",run,guess);
+                       break;
+                }
+        
+                for(i=0;i<5;i++)/*set check back to 0*/
+                {
+                secret_check[i]=0;
+                guess_check[i]=0;
+                }
+                for(i=0;i<5;i++)
+                {
+                       if(guess[i]==secret[i])
+                       {
+                               printf("*");
+                               guess_check[i]=1;
+                               secret_check[i]=1;
+                       }
+                                 
+                }    
+                for(i=0;i<5;i++)
+                       for(j=0;j<5;j++)
+                       {
+                               if((guess[i]==secret[j])&&(i!=j)&&(guess_check[i]!=1)&&(secret_check[j]!=1))
+                               {
+                                      printf("o");
+                                      guess_check[i]=1;
+                                      secret_check[j]=1;
+                               }
+                       }
+                }
+        }        
+        if(run>8)//only print next line if user did not guess the number
+        {
+                printf("\n\nUnfortunately you did not guess it, the secret code was: %s\n",secret);
+        }        
+        printf("\nPlay again (y/n)?: ");
+        again=getch();
+        
+    }
+    return EXIT_SUCCESS;   
+}   
+
+   
+void manual(void)/*the help function*/
+{    
+      printf("\nThe goal of the game is to guess the secret code.\n");
+      printf("The code contains 5 random numbers from 1 - 6.\n");
+      printf("You have 8 tries for this.\n");      
+      printf("Every \'*\' you see next to your input, \n");
+      printf("means that you have one number correct and in the right place.\n");
+      printf("Every \'o\' you see next to your input,\n");
+      printf("means that you have one number correct, but not at the right place.\n");
+      printf("\nLet's get started!\n\n");
+      
+}
